@@ -33,6 +33,10 @@ class RequestsComparator
                     // Guzzle\Http\Message\EntityEnclosingRequest object
                     break;
 
+                case 'Zend\Http\Request':
+                    $request = RequestFactory::getInstance()->fromMessage($request->toString());
+                    break;
+
                 default:
                     throw new \InvalidArgumentException('"' . $className . '" is not supported');
             }
