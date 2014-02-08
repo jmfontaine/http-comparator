@@ -1,0 +1,32 @@
+{
+    "name": "jmfontaine/http-comparator",
+    "description": "PHP library to compare HTTP requests and responses",
+    "license": "BSD-3-Clause",
+    "homepage": "https://github.com/jmfontaine/http-comparator",
+    "authors": [
+        {
+            "name": "Jean-Marc Fontaine",
+            "email": "jm@jmfontaine.net",
+            "homepage": "http://jmfontaine.net/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "guzzle/http": "~3.8"
+    },
+    "require-dev": {
+        "guzzle/plugin-history": "~3.8",
+        "phpunit/phpunit": "~3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "HttpComparator\\": "src/",
+            "HttpComparator\\Tests\\": "tests/"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/jmfontaine/http-comparator/issues"
+    },
+    "minimum-stability": "stable"
+}
