@@ -10,6 +10,7 @@ namespace HttpComparator\Tests;
 
 use Guzzle\Http\Message\RequestFactory;
 use HttpComparator\RequestsComparator;
+use Zend\Http\Request as ZendRequest;
 
 class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
 {
@@ -21,6 +22,15 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
      * ============================================================================================================
      */
 
+    protected function getRequestFactory()
+    {
+        if (null === $this->requestFactory) {
+            $this->requestFactory = new RequestFactory();
+        }
+
+        return $this->requestFactory;
+    }
+
     /**
      * @param string      $method  HTTP method
      * @param string      $url     Target URL
@@ -31,10 +41,6 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
      */
     protected function createRequest(array $options = array())
     {
-        if (null === $this->requestFactory) {
-            $this->requestFactory = new RequestFactory();
-        }
-
         $defaultOptions = array(
             'body'            => 'Example body',
             'headers'         => array('User-Agent' => 'HttpComparator'),
@@ -48,7 +54,7 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
         );
         $options = array_merge($defaultOptions, $options);
 
-        return $this->requestFactory->create(
+        return $this->getRequestFactory()->create(
             $options['method'],
             $options['url'],
             $options['headers'],
@@ -90,6 +96,34 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
         foreach ($this->getMethods() as $method) {
             $request = $this->createRequest(array('method' => $method));
             $data[] = array($request, $request);
+        }
+
+        return $data;
+    }
+
+    public function provideIdenticalGetRequestsInDifferentFormats()
+    {
+        $data = array();
+
+        $textRequest   = $this->loadRequest('example.com');
+        $guzzleRequest = $this->getRequestFactory()->fromMessage($textRequest);
+        $zendRequest   = ZendRequest::fromString($textRequest);
+
+        $requests = array(
+            $textRequest,
+            $guzzleRequest,
+            $zendRequest,
+        );
+
+        foreach ($requests as $request1) {
+            foreach ($requests as $request2) {
+                // Don't compare a request with itself
+                if ($request1 !== $request2) {
+                    continue;
+                }
+
+                $data[] = array($request1, $request2);
+            }
         }
 
         return $data;
@@ -302,5 +336,15 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
     {
         $comparator = new RequestsComparator();
         $this->assertFalse($comparator->compare($request1, $request2));
+    }
+
+    /**
+     * @test
+     * @dataProvider provideIdenticalGetRequestsInDifferentFormats
+     */
+    public function comparingTheSameGetRequestInDifferentFormatsSucceed($request1, $request2)
+    {
+        $comparator = new RequestsComparator();
+        $this->assertTrue($comparator->compare($request1, $request2));
     }
 }
