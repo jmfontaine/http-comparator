@@ -1,0 +1,3 @@
+GET / HTTP/1.1
+Host: example.com
+User-Agent: Guzzle/3.8.1 curl/7.30.0 PHP/5.4.24
