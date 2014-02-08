@@ -8,6 +8,7 @@
 
 namespace HttpComparator\Tests;
 
+use Buzz\Message\Request as BuzzRequest;
 use Guzzle\Http\Message\RequestFactory;
 use HttpComparator\RequestsComparator;
 use Zend\Http\Request as ZendRequest;
@@ -107,11 +108,19 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
 
         $textRequest   = $this->loadRequest('example.com');
         $guzzleRequest = $this->getRequestFactory()->fromMessage($textRequest);
-        $zendRequest   = ZendRequest::fromString($textRequest);
+
+        $buzzRequest = new BuzzRequest(
+            $guzzleRequest->getMethod(),
+            $guzzleRequest->getPath()
+        );
+        $buzzRequest->setHeaders($guzzleRequest->getHeaderLines());
+
+        $zendRequest = ZendRequest::fromString($textRequest);
 
         $requests = array(
-            $textRequest,
+            $buzzRequest,
             $guzzleRequest,
+            $textRequest,
             $zendRequest,
         );
 
