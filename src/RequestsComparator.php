@@ -33,6 +33,10 @@ class RequestsComparator
                     // Guzzle\Http\Message\EntityEnclosingRequest object
                     break;
 
+                case 'Buzz\Message\Request':
+                    $request = RequestFactory::getInstance()->fromMessage($request->__toString());
+                    break;
+
                 case 'Zend\Http\Request':
                     $request = RequestFactory::getInstance()->fromMessage($request->toString());
                     break;
