@@ -183,9 +183,10 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
     public function provideUnmatchingPasswords()
     {
         $request1 = $this->createRequest();
+        $request1->setAuth('dummy', 'dummy');
 
-        $request2 = clone $request1;
-        $request2->setAuth('dummy', 'dummy');
+        $request2 = $this->createRequest();
+        $request2->setAuth('dummy', 'ymmud');
 
         return array(array($request1, $request2));
     }
