@@ -33,10 +33,7 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string      $method  HTTP method
-     * @param string      $url     Target URL
-     * @param array|null  $headers HTTP headers
-     * @param string|null $body    Request body
+     * @param array|null  $options Options
      *
      * @return Guzzle\Http\Message\Request|Guzzle\Http\Message\EntityEnclosingRequest
      */
@@ -136,6 +133,21 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
         }
 
         return $data;
+    }
+
+    public function provideInvalidObjects()
+    {
+        return array(
+            array(new \StdClass(), new \StdClass()),
+        );
+    }
+
+    public function provideInvalidTypes()
+    {
+        return array(
+            array(1234, 1234),
+            array(1.234, 1.234),
+        );
     }
 
     public function provideUnmatchingHosts()
@@ -352,6 +364,28 @@ class RequestsComparatorTest  extends \PHPUnit_Framework_TestCase
      * @dataProvider provideIdenticalGetRequestsInDifferentFormats
      */
     public function comparingTheSameGetRequestInDifferentFormatsSucceed($request1, $request2)
+    {
+        $comparator = new RequestsComparator();
+        $this->assertTrue($comparator->compare($request1, $request2));
+    }
+
+    /**
+     * @test
+     * @dataProvider provideInvalidObjects
+     * @expectedException \InvalidArgumentException
+     */
+    public function comparingInvalidObjectsFails($request1, $request2)
+    {
+        $comparator = new RequestsComparator();
+        $this->assertTrue($comparator->compare($request1, $request2));
+    }
+
+    /**
+     * @test
+     * @dataProvider provideInvalidTypes
+     * @expectedException \InvalidArgumentException
+     */
+    public function comparingInvalidTypesFails($request1, $request2)
     {
         $comparator = new RequestsComparator();
         $this->assertTrue($comparator->compare($request1, $request2));
